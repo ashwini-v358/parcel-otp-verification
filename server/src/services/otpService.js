@@ -1,5 +1,6 @@
 const crypto = require("crypto");
 const pool = require("../config/db");
+const { logAudit } = require("./auditLogService");
 
 function generateOTP() {
     const otp = crypto.randomInt(100000, 1000000);
@@ -173,22 +174,6 @@ async function verifyOTP(verificationId, enteredOTP) {
         success: false,
         message: "Invalid OTP"
     };
-}
-
-async function logAudit(
-    parcelId,
-    verificationId,
-    result
-) {
-
-    await pool.query(
-        `
-        INSERT INTO verification_audit_log
-        (parcel_id, otp_verification_id, result)
-        VALUES ($1, $2, $3);
-        `,
-        [parcelId, verificationId, result]
-    );
 }
 
 async function test() {
